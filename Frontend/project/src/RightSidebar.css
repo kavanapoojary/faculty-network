@@ -1,0 +1,225 @@
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 49;
+  opacity: 1;
+  transition: opacity 0.3s ease-in-out;
+}
+/* Fullscreen overlay */
+.logout-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7); /* Darker background */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* Ensure it's above everything */
+}
+
+/* Modal box */
+.modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+  min-width: 600px;
+  height: 200px;
+}
+
+/* Buttons */
+.modal-buttons {
+  margin-top: 15px;
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.cancel-btn, .logout-btn {
+  margin-top: 40px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.cancel-btn {
+  background: gray;
+  color: white;
+}
+.cancel-btn:hover {
+  background: gray;
+   color:  #084298;
+ }
+ 
+.logout-btn {
+  background: gray;
+  color: white;
+}
+.logout-btn:hover {
+  background: gray;
+   color:  #084298;
+ }
+ 
+
+/* ===== Icons in the top-right corner ===== */
+.top-right-icons {
+  position: fixed;
+  top: 15px;
+  right: 20px;
+  display: flex;
+  align-items: center;
+  gap: 30px; /* Space between search and menu */
+  z-index: 50;
+}
+
+.icon {
+  font-size: 30px;
+  cursor: pointer;
+}
+
+/* ===== Menu Button Animation ===== */
+.menu-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.3s ease-in-out;
+}
+
+.menu-icon {
+  font-size: 50px;
+  transition: transform 0.3s ease-in-out;
+}
+
+.menu-toggle.open .menu-icon {
+  transform: rotate(180deg); /* Smooth transition effect */
+}
+
+/* ===== Top Sliding Menu ===== */
+.top-menu {
+  position: fixed;
+  top: -100px; /* Start hidden above */
+  left: 0;
+  width: 100%;
+  background: white;
+  padding: 20px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  z-index: 50;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: top 0.3s ease-in-out;
+  padding-top: 60px;
+  margin-top: 70px;
+}
+
+/* Show the menu when open */
+.overlay .top-menu {
+  top: 0;
+}
+
+/* ===== Close Button Styling ===== */
+.close-icon {
+  position: absolute;
+  top: 24px;
+  right: 30px;
+  font-size: 30px;
+  cursor: pointer;
+  transition: transform 0.3s ease-in-out;
+}
+
+/* Rotate close button smoothly */
+.close-icon:hover {
+  transform: rotate(90deg);
+}
+
+/* ===== Sidebar Styles ===== */
+.sidebar {
+  width: 300px;
+  height: 100%;
+  background: white;
+  padding: 20px;
+  box-shadow: -4px 0 10px rgba(0, 0, 0, 0.1);
+  transform: translateX(100%);
+  transition: transform 0.3s ease-in-out;
+}
+
+/* Show Sidebar */
+.overlay .sidebar {
+  transform: translateX(0);
+}
+
+/* ===== Navigation Links ===== */
+.nav-links {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.nav-links li {
+  padding: 15px;
+  cursor: pointer;
+  transition: background 0.3s;
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.nav-links li:hover {
+  background: #f0f0f0;
+}
+.top-right-icons .icon {
+  color: black !important; /* Ensure icon is black */
+}
+
+/* ===== Fixed Navigation Bar ===== */
+.fixed-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: white;
+  padding: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+}
+/* ===== Top Image Styling ===== */
+.top-image-container {
+  position: relative;
+  width: 100%;
+  height: 380px; /* Adjust height as needed */
+  overflow: hidden;
+  background: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-bottom: 2px solid #ddd; /* Optional border */
+}
+.top-image-container relative{
+background: none;
+  
+}
+.top-image {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  filter: blur(7px); /* Adjust the blur level */
+  transition: filter 0.3s ease-in-out; /* Smooth transition */
+}
+
+/* Optional: Remove blur on hover */
+.top-image:hover {
+  filter: blur(7px);
+}

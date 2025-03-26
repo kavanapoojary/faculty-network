@@ -1,0 +1,139 @@
+input[type="password"]::-ms-reveal,
+input[type="password"]::-webkit-contacts-auto-fill-button,
+input[type="password"]::-webkit-textfield-decoration-container {
+  display: none !important;
+  pointer-events: none;
+  visibility: hidden;
+}
+/* Background Styling */
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; /* Make the body take full height */
+  background-color: #f5f5f5; /* Optional: Background color */
+  margin: 0; /* Remove default margin */
+}
+
+/* 📌 Extra Large Login Container */
+.loginn-container {
+  background: linear-gradient(to right, #002244, #004488);
+align-items: center;
+justify-content: center;
+  padding: 80px; /* Increased padding significantly */
+  width: 750px; /* Made it even wider */
+  height: 700px;
+  margin-top: 90px;
+text-align: center;
+}
+
+/* Title */
+.login-title {
+  color: white;
+  font-size: 32px; /* Increased font size */
+  margin-bottom: 40px;
+}
+
+/* 📌 Bigger Input Fields */
+.input-group {
+  display: flex;
+
+  align-items: center;
+  background: none;
+  border-bottom: 3px solid white; /* Thicker line */
+  margin-bottom: 30px; /* Increased spacing */
+  padding: 15px 20px; /* Increased padding */
+  position: relative;
+}
+
+.icon {
+  color: white;
+  margin-right: 20px; /* Increased spacing */
+  font-size: 24px; /* Made icons bigger */
+}
+
+.input-group input {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: white;
+  flex: 1;
+  font-size: 22px; /* Increased font size */
+}
+
+.input-group input::placeholder {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 20px;
+}
+
+/* Forgot Password */
+.forgot-password {
+  display: block;
+  color: white;
+  text-align: right;
+  margin-top: 5px;
+  cursor: pointer;
+}
+.eye-icon {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 28px;
+  color: white;  /* Force white color */
+  cursor: pointer;
+}
+
+.eye-icon svg {
+  fill: white !important; 
+}
+
+/* Dropdown Icon */
+.dropdown-icon {
+  position: absolute;
+  right: 15px;
+  font-size: 18px; /* Bigger icon */
+  color: white;
+}
+
+/* 📌 Extra Large Login Button */
+.login-button {
+  width: 100%;
+  padding: 22px; /* Increased button height */
+  background: white;
+  color: #003366;
+  border: none;
+  font-size: 22px; /* Bigger text */
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 5px;
+  margin-top: 50px;
+}
+
+.login-button:hover {
+  background: #cccccc;
+}
+
+/* 📌 Larger Footer Section */
+.login-footer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 30px;
+  color: white;
+  font-size: 18px; /* Bigger text */
+}
+
+.remember-me {
+  display: flex;
+  color: grey;
+  align-items: center;
+}
+
+.signup-link {
+  cursor: pointer;
+  font-size: 18px; /* Increased size */
+}
+
+.signup-link span {
+  font-weight: bold;
+}

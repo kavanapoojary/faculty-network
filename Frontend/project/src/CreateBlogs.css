@@ -1,0 +1,125 @@
+
+.blog-ccontainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  width: 1680px;
+  overflow-y: hidden;
+  overflow-x: hidden;
+
+}
+
+.blog-ccard {
+  width: 1500px;
+  padding: 20px;
+
+
+  background: #eef6ff;
+  border: 0.5px solid #0a58ca;
+
+}
+
+.form-grroup {
+  display: grid;
+  grid-template-columns: 150px 1fr;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 15px;
+  
+
+}
+
+.form-grroup input, .form-grroup select {
+  width: 1300px;
+  padding: 8px;
+  border: 1px solid #ccc;
+
+  
+
+ 
+}
+
+.form-row {
+  display: flex;
+  gap: 15px;
+  
+}
+
+.form-row .form-grroup {
+  flex: 1;
+}
+
+.content-area  {
+  min-height: 500px;
+  width: 10px;
+
+
+  
+}
+.ql-container {
+  min-height: 600px !important;
+
+
+  width: 1458px;
+}
+
+.next-btn {
+  width: 8%;
+  background-color: white;
+ padding: 10px;
+  color: black;
+  border: none;
+  margin-left: 1342px;
+  margin-top: 9px;
+
+  cursor: pointer;
+}
+
+.next-btn:hover {
+ background: #eef6ff;
+  color:  #084298;
+}
+
+
+.form-grouup {
+  display: grid;
+ 
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+.step-two-container{
+  height: 80%;
+}
+
+.step-two-container .form-group {
+  margin-bottom: 15px;
+}
+/* 📌 Wrap buttons in a flex container */
+.step-two-buttons {
+  display: flex;
+  justify-content: flex-end; /* Align buttons to the right */
+  gap: 10px; /* Space between buttons */
+  margin-top: 20px;
+}
+
+/* 🔘 Common styles for buttons */
+.back-btn,
+.submit-btn {
+  width: 10%; /* Adjust button width */
+  min-width: 100px; /* Ensure buttons are not too small */
+  background-color: white;
+  padding: 10px;
+  color: black;
+  border: none;
+  cursor: pointer;
+  text-align: center;
+}
+
+/* 🖱️ Hover Effects */
+.back-btn:hover,
+.submit-btn:hover {
+  background: #eef6ff;
+  color: #084298;
+}

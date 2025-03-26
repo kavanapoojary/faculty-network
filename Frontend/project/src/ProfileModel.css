@@ -1,0 +1,157 @@
+/* Overlay */
+.profile-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+}
+
+/* Modal */
+.profile-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  flex-direction: row;
+  transform: translate(-50%, -50%);
+  background: white;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+  width: 60%;
+  max-width: 800px;
+  z-index: 1000;
+  overflow-y: auto;
+  max-height: 90vh;
+}
+
+/* Close Button */
+.close-button {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: transparent;
+  color: #333;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+/* Profile Header */
+.profile-header {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 15px;
+  margin-bottom: 15px;
+}
+
+.profile-image-container {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+}
+
+/* Profile Image */
+.profile-immg {
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  border: 4px solid #ddd;
+  overflow: hidden;
+}
+
+.profile-immg img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Profile Details */
+.profile-details {
+  flex: 2;
+  flex-grow: 1;
+  margin-left: 20px;
+  text-align: left;
+}
+
+.profile-details h2 {
+  margin-bottom: 5px;
+  font-size: 22px;
+  font-weight: bold;
+}
+
+.profile-details p {
+  margin: 3px 0;
+  font-size: 14px;
+  color: #444;
+}
+
+.profile-details p strong {
+  font-weight: bold;
+  color: black;
+}
+
+/* Section Headers */
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 16px;
+  font-weight: bold;
+  padding: 15px;
+  background: #f1f1f1;
+  color: black;
+  cursor: pointer;
+  border-radius: 5px;
+  margin-top: 10px;
+}
+
+.section-header:hover {
+  background: #e0e0e0;
+}
+
+/* Expandable Sections */
+.profile-section {
+  border-radius: 5px;
+}
+
+/* Expandable Content */
+.profile-section-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out;
+  opacity: 0;
+  padding: 0 15px;
+}
+
+.profile-section-content.show {
+  max-height: 500px;
+  opacity: 1;
+  padding: 10px 15px;
+  background: #f9f9f9;
+}
+
+/* Links */
+.profile-section-content a {
+  word-break: break-word;
+  color: #0073e6;
+  text-decoration: none;
+}
+
+.profile-section-content a:hover {
+  text-decoration: underline;
+}
+
+/* Arrow Icon */
+.arrow {
+  transition: transform 0.3s ease;
+}
+
+.profile-section.expanded .arrow {
+  transform: rotate(180deg);
+}
