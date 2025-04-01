@@ -7,6 +7,7 @@ const Signup = () => {
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
     firstName: "",
+    middleName: "",
     lastName: "",
     email: "",
     collegeEmail: "",
@@ -43,7 +44,7 @@ const Signup = () => {
   const [approvalStatus, setApprovalStatus] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null); // Add selectedUser state
-
+  const [selectedUserIds, setSelectedUserIds] = useState([]); // Store multiple users
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -54,15 +55,26 @@ const Signup = () => {
     setFormData({ ...formData, profilePicture: e.target.files[0] });
   };
 
-  const handleSuggestionSelect = (user) => {
-    setSelectedUser(user.userId._id);
-};
+
+  const handleSuggestionSelect = (userId) => {
+    if (selectedUserIds.includes(userId)) {
+      setSelectedUserIds(selectedUserIds.filter((id) => id !== userId));
+    } else if (selectedUserIds.length < 4) {
+      setSelectedUserIds([...selectedUserIds, userId]);
+    }
+    
+    // ✅ Debugging
+    console.log("Updated Selected Users:", selectedUserIds);
+  };
+  
+
 const checkCollegeEmail = async () => {
   console.log("checkCollegeEmail called");
   console.log("College Email:", formData.collegeEmail);
   try {
     const response = await axios.get(
       `http://localhost:5000/check-college-email?collegeEmail=${formData.collegeEmail}`
+      
     );
     console.log("Check Email Response:", response);
 
@@ -81,19 +93,19 @@ const checkCollegeEmail = async () => {
     setMessage({ type: "error", text: "Error checking email." });
   }
 };
-
-const sendotp = async () => {
-  if (!selectedUser) {
-    setMessage({ type: "error", text: "Please select a user." });
+const sendApprovalRequest = async () => {
+  if (selectedUserIds.length !== 4) {
+    setMessage({ type: "error", text: "Please select exactly 4 approvers." });
     return;
   }
-
+  
   try {
     const response = await axios.post("http://localhost:5000/send-approval-request", {
-      selectedUserId: selectedUser,
+      selectedUserIds, // Send array of user IDs
       yourEmail: formData.collegeEmail,
-      formData: { // ✅ Include user details
+      formData: {
         firstName: formData.firstName,
+        middleName: formData.middleName,
         lastName: formData.lastName,
         phone: formData.phone,
         collegeEmail: formData.collegeEmail,
@@ -102,20 +114,19 @@ const sendotp = async () => {
         institution: formData.institution,
         qualification: formData.qualification,
         specialization: formData.specialization,
-      }
+      },
     });
 
     console.log("Approval Request Response:", response.data);
-    setMessage({ type: "info", text: "Approval request sent. Waiting for approval..." });
-    setOtpSent(false);
-    setSuggestions([]);
-    setSelectedUser(null);
 
-    checkApprovalStatus(selectedUser);
+    // ✅ Display success message
+    setMessage({ type: "success", text: "Approval request sent successfully! Waiting for responses." });
 
+    // ✅ Reset selections
+    setSelectedUserIds([]);
   } catch (error) {
     console.error("Error sending approval request:", error);
-    setMessage({ type: "error", text: error.response?.data?.message || "Failed to send approval request" });
+    setMessage({ type: "error", text: "Failed to send approval request" });
   }
 };
 
@@ -214,6 +225,7 @@ const handleSignup = async (e) => {
     // Create User
     const response = await axios.post("http://localhost:5000/signup", {
       firstName: formData.firstName,
+      middleName:formData.middleName,
       lastName: formData.lastName,
       email: formData.email,
       collegeEmail: formData.collegeEmail,
@@ -248,7 +260,7 @@ const handleSignup = async (e) => {
     const defaultProfile = {
       userId,
       personal: {
-        fullName: `${formData.firstName} ${formData.lastName}`,
+        fullName: `${formData.firstName} ${formData.middleName}${formData.lastName}`,
         personalEmail: formData.email,
         collegeEmail: formData.collegeEmail,
         phone: formData.phone,
@@ -260,6 +272,7 @@ const handleSignup = async (e) => {
       academic: {
         qualification: formData.qualification,
         specialization: formData.specialization,
+        institution: formData.institution,
         designation: formData.designation,
         department: formData.department,
       },
@@ -282,11 +295,10 @@ const handleSignup = async (e) => {
       {message.text && <div className={`message ${message.type}`}>{message.text}</div>}
       {step === 1 && (
         <>
-          <h2>Personal & Academic Details</h2>
+         
           <input type="text" name="firstName" placeholder="First Name" onChange={handleChange} required />
+          <input type="text" name="middleName" placeholder="Middle Name" onChange={handleChange} required />
           <input type="text" name="lastName" placeholder="Last Name" onChange={handleChange} required />
-          <input type="text" name="designation" placeholder="Designation" onChange={handleChange} required />
-          <input type="text" name="department" placeholder="Department" onChange={handleChange} required />
           <button onClick={() => setStep(2)}>Next</button>
         </>
       )}
@@ -309,6 +321,7 @@ const handleSignup = async (e) => {
       
        {step === 3 && (
           <>
+           <h2>Personal Details</h2>
           <input type="file" accept="image/*" onChange={handleImageUpload} />
           <input type="text" name="phone" placeholder="Phone Number" onChange={handleChange} required />
           <input type="date" name="dob" placeholder="Date of Birth" onChange={handleChange} required />
@@ -345,24 +358,23 @@ const handleSignup = async (e) => {
       
       {step === 6 && (
         <>
-          <h2>Research & Publications</h2>
-          <input type="text" name="papers" placeholder="Papers" onChange={handleChange} required />
-          <input type="text" name="conferences" placeholder="Conferences" onChange={handleChange} required />
-          <input type="text" name="books" placeholder="Books" onChange={handleChange} required />
-          <input type="text" name="patents" placeholder="Patents" onChange={handleChange} required />
-          <input type="text" name="grants" placeholder="Grants" onChange={handleChange} required />
+          <h2>Additional Information</h2>
+        
+        <input type="text" name="googleScholar" placeholder="Google Scholar" onChange={handleChange} required />
+        <input type="text" name="linkedIn" placeholder="LinkedIn" onChange={handleChange} required />
+        <input type="text" name="skills" placeholder="Skills" onChange={handleChange} required />
+        <input type="text" name="achievements" placeholder="Achievements" onChange={handleChange} required />
           <button onClick={() => setStep(7)}>Next</button>
         </>
       )}
       
       {step === 7 && (
         <>
-          <h2>Additional Information</h2>
-        
-          <input type="text" name="googleScholar" placeholder="Google Scholar" onChange={handleChange} required />
-          <input type="text" name="linkedIn" placeholder="LinkedIn" onChange={handleChange} required />
-          <input type="text" name="skills" placeholder="Skills" onChange={handleChange} required />
-          <input type="text" name="achievements" placeholder="Achievements" onChange={handleChange} required />
+         <h2>Set Password</h2>
+         
+         <input type="password" name="password" placeholder="New Password" onChange={handleChange} required />
+         <input type="password" name="confirmPassword" placeholder="Confirm Password" onChange={handleChange} required />
+           
           <button onClick={() => setStep(8)}>Next</button>
 
 
@@ -371,21 +383,8 @@ const handleSignup = async (e) => {
      
       {step === 8 && (
         <>
-     <h2>Set Password</h2>
-         
-            <input type="password" name="password" placeholder="New Password" onChange={handleChange} required />
-            <input type="password" name="confirmPassword" placeholder="Confirm Password" onChange={handleChange} required />
-           
-
-
- <button onClick={() => setStep(9)}>Next</button>     
-</>
-      )}
-
-       {step === 9 && (
-        <>
-       
-           <input type="email" name="collegeEmail" placeholder="College Email" onChange={handleChange} required />
+     
+     <input type="email" name="collegeEmail" placeholder="College Email" onChange={handleChange} required />
           <h2>College Email Verification</h2>
           
           <button onClick={checkCollegeEmail}>Check Email</button>
@@ -393,41 +392,44 @@ const handleSignup = async (e) => {
           {suggestions.length > 0 && (
     <div>
         <h3>Existing Accounts:</h3>
-        <ul>
-  {suggestions.map((user) => {
-    if (!user.userId) return null; // ✅ Skip invalid entries
+    {/* Suggestions Container */}
+    <div className="suggestions-container">
+          {suggestions.map((user, index) => (
+            <div className="suggestion-card" key={`${user.userId._id}-${index}`}>
+              {/* <img src={user.personal.profilePicture || "/default-avatar.png"} alt="Profile" className="profile-picture" /> */}
+              
+              <div className="user-info">
+                <p className="user-name">{user.personal.fullName} </p>
+                <p className="user-email">{user.personal.collegeEmail}</p>
+              </div>
 
-    return (
-      <li key={user.userId._id}>
-        <label>
-          <input
-            type="radio"
-            name="selectedUser"
-            value={user.userId._id}
-            checked={selectedUser === user.userId._id}
-            onChange={() => handleSuggestionSelect(user)}
-          />
-          {user.userId.firstName} {user.userId.lastName} ({user.personal.collegeEmail})
-        </label>
-      </li>
-    );
-  })}
-</ul>
+              {/* Selection Button (Toggle) */}
+              <button
+                className={`select-btn ${selectedUserIds.includes(user.userId._id) ? 'selected' : ''}`}
+                onClick={() => handleSuggestionSelect(user.userId._id)}
+                disabled={selectedUserIds.length >= 4 && !selectedUserIds.includes(user.userId._id)}
+              >
+                {selectedUserIds.includes(user.userId._id) ? 'Selected' : 'Select'}
+              </button>
+            </div>
+          ))}
+        </div>
 
-        {selectedUser && (
-            <button onClick={sendotp}>
-                Send Approval Request
-            </button>
-        )}
-    </div>
-)}  
- <form onSubmit={handleSignup}>
-         <button type="submit">Signup</button>  
-         </form>
-        </>
-      )}   
-    </div>
-  );
+        <button onClick={sendApprovalRequest} disabled={selectedUserIds.length !== 4} className="approval-btn">
+          Send Approval Request
+        </button>
+      </div>
+    )}
+
+    {/* Signup Form */}
+    <form onSubmit={handleSignup}>
+      <button type="submit">Signup</button>  
+    </form>
+</>
+      )}
+
+      
+</div>);
 };
 
 export default Signup;

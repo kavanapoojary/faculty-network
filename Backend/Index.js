@@ -8,8 +8,11 @@ const multer = require("multer");
 const path = require("path");
 const crypto = require("crypto"); // For generating random verification tokens
 const nodemailer = require("nodemailer"); // For sending emails
+const { type } = require("os");
+const { request } = require("http");
 const generateOTP = () => Math.floor(100000 + Math.random() * 900000).toString();
 const otpStorage = {}; // Temporary in-memory storage (Use DB for production)
+
 
 const app = express();
 app.use(cors());
@@ -39,26 +42,27 @@ const userSchema = new mongoose.Schema({
 
 const User = mongoose.model("User", userSchema);
 const approvalRequestSchema = new mongoose.Schema({
-  token: { type: String, required: true, unique: true },
-  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-  requestorEmail: { type: String, required: true },
-  requestorDetails: { // ✅ Store the form data
-    firstName: String,
-    lastName: String,
-    phone: String,
-    collegeEmail: String,
-    designation: String,
-    department: String,
-    institution: String,
-    qualification: String,
-    specialization: String,
+  token: { type: String, required: true, unique: true, index: true }, // ✅ Indexed for faster lookups
+  userId: { type: [mongoose.Schema.Types.ObjectId], ref: "User", required: true }, // ✅ Changed to an array of ObjectIds
+  requestorEmail: { type: String, required: true, lowercase: true }, // ✅ Ensure case-insensitive emails
+  requestorDetails: {
+    firstName: { type: String, required: true },
+    lastName: { type: String, required: true },
+    phone: { type: String, required: true },
+    collegeEmail: { type: String, required: true, lowercase: true },
+    designation: { type: String, required: true },
+    department: { type: String, required: true },
+    institution: { type: String, required: true },
+    qualification: { type: String, required: true },
+    specialization: { type: String, required: true },
   },
-  createdAt: { type: Date, default: Date.now },
-  status: { type: String, enum: ['pending', 'approved', 'rejected'], default: 'pending' }
+  createdAt: { type: Date, default: Date.now, expires: "7d" }, // ✅ Auto-delete after 7 days
+  status: { type: String, enum: ["pending", "approved", "rejected"], default: "pending" },
 });
 
 
-const ApprovalRequest = mongoose.model('ApprovalRequest', approvalRequestSchema);
+const ApprovalRequest = mongoose.model("ApprovalRequest", approvalRequestSchema);
+module.exports = ApprovalRequest;
 
 // ✅ Profile Schema
 const profileSchema = new mongoose.Schema({
@@ -193,149 +197,163 @@ app.post("/signup", async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 });
-
-
 app.get("/check-college-email", async (req, res) => {
   try {
-      const { collegeEmail } = req.query;
-      console.log("Checking college email:", collegeEmail); // Log the email
-      if (!collegeEmail) return res.status(400).json({ message: "Email is required" });
+    const { collegeEmail } = req.query;
+    console.log("Checking college email:", collegeEmail);
 
-      // ✅ Extract the domain
-      const domain = collegeEmail.substring(collegeEmail.lastIndexOf("@") + 1);
-            console.log("Extracted domain:", domain);
-      if (!domain) {return res.status(400).json({ message: "Invalid email format" });
-  }
-      const query = { "personal.collegeEmail": { $regex:  `@${domain}$`, $options: "i" } };
-      console.log("Database query:", query);
-  
+    if (!collegeEmail) return res.status(400).json({ message: "Email is required" });
 
-      const suggestions = await Profile.find(query).populate("userId","_id firstName lastName email").select("personal.collegeEmail userId");
+    const domain = collegeEmail.substring(collegeEmail.lastIndexOf("@") + 1);
+    console.log("Extracted domain:", domain);
 
-    console.log("Suggestions found:", suggestions);
-    res.json(suggestions);
+    if (!domain) return res.status(400).json({ message: "Invalid email format" });
+
+    const suggestions = await Profile.find({ "personal.collegeEmail": { $regex: `@${domain}$`, $options: "i" } })
+      .populate("userId", "_id firstName lastName email")
+      .select("personal.collegeEmail personal.fullName personal.profilePicture userId");
+
+    // ✅ Ensure userId exists before accessing properties
+    const uniqueSuggestions = [];
+    const seenUserIds = new Set();
+
+    suggestions.forEach(user => {
+      if (user.userId && user.userId._id) {  // Ensure userId exists
+        if (!seenUserIds.has(user.userId._id.toString())) {
+          uniqueSuggestions.push(user);
+          seenUserIds.add(user.userId._id.toString());
+        }
+      } else {
+        console.warn("Skipping user with missing userId:", user);
+      }
+    });
+
+    console.log("Final Suggestions:", uniqueSuggestions);
+    res.json(uniqueSuggestions);
   } catch (error) {
     console.error("Error checking college email:", error);
     res.status(500).json({ message: "Error checking email" });
   }
 });
 
+
+
+// ✅ Send Approval Request (Fixes Token Generation & Email Sending)
 app.post("/send-approval-request", async (req, res) => {
   try {
-    const { selectedUserId, yourEmail, formData } = req.body; // ✅ Get formData from request
-
-    if (!selectedUserId || !yourEmail || !formData) { 
-      return res.status(400).json({ message: "User ID, email, and form data are required" });
+    const { selectedUserIds, yourEmail, formData } = req.body;
+    if (!selectedUserIds || !yourEmail || !formData) {
+      return res.status(400).json({ message: "Missing required fields" });
     }
+    let userIds = []
+    const approvalToken = crypto.randomBytes(20).toString("hex");
+    for (const selectedUserId of selectedUserIds) {
+      const selectedUser = await User.findById(selectedUserId);
+      if (!selectedUser) continue;
+      userIds.push(mongoose.Types.ObjectId(selectedUserId))
+      const profile = await Profile.findOne({ userId: selectedUserId });
+      if (!profile?.personal?.collegeEmail) continue;
 
-    const selectedUser = await User.findById(selectedUserId);
-    if (!selectedUser) {
-      return res.status(404).json({ message: "Selected user not found" });
+      
+
+      
+
+      const approvalLink = `http://localhost:5173/response/${approvalToken}`;
+
+      await transporter.sendMail({
+        from: process.env.EMAIL_USER,
+        to: profile.personal.collegeEmail,
+        subject: "Approval Request",
+        html: `
+          <p><strong>Approval Request from ${formData.firstName} ${formData.lastName}:</strong></p>
+          <p><strong>Email:</strong> ${yourEmail}</p>
+          <p><strong>Approval Link:</strong> <a href="${approvalLink}">Approve Request</a></p>
+        `,
+      });
     }
-
-    const profile = await Profile.findOne({ userId: selectedUserId });
-    if (!profile || !profile.personal || !profile.personal.collegeEmail) {
-      return res.status(404).json({ message: "College email not found for the selected user" });
-    }
-    const collegeEmail = profile.personal.collegeEmail;
-
-    const approvalToken = crypto.randomBytes(20).toString('hex');
-
-    // ✅ Store requestor details in DB
-    const newApproval = new ApprovalRequest({
+    const aprreq = await new ApprovalRequest({
       token: approvalToken,
-      userId: selectedUser._id,
+      userId: userIds,
       requestorEmail: yourEmail,
-      requestorDetails: formData, // ✅ Store the full form data
-    });
-
-    await newApproval.save();
-
-const approvalLink = `http://localhost:5173/response/${approvalToken}`;
-
-
-    // ✅ Send approval request email with requestor details
-    const mailOptions = {
-      from: process.env.EMAIL_USER,
-      to: collegeEmail,
-      subject: "Approval Request",
-      html: `
-        <p><strong>Approval Request from ${formData.firstName} ${formData.lastName}:</strong></p>
-        <p><strong>Email:</strong> ${yourEmail}</p>
-        <p><strong>Phone:</99   vvvvv vv v  v v v      n nstrong> ${formData.phone}</p>
-        <p><strong>College Email:</strong> ${formData.collegeEmail}</p>
-        <p><strong>Designation:</strong> ${formData.designation}</p>
-        <p><strong>Department:</strong> ${formData.department}</p>
-        <p><strong>Institution:</strong> ${formData.institution}</p>
-        <p><strong>Qualification:</strong> ${formData.qualification}</p>
-       
-        <p><strong>Approval Link:</strong> <a href="${approvalLink}">Approve Request</a></p>
-      `,
-    };
-
-    await transporter.sendMail(mailOptions);
-    res.json({ message: "Approval request sent successfully" });
-
+      requestorDetails: formData,
+    }).save();
+    console.log(aprreq)
+    res.json({ message: "Approval requests sent successfully!" });
   } catch (error) {
     console.error("Error sending approval request:", error);
     res.status(500).json({ message: "Server error" });
   }
 });
 
-
+// ✅ Fetch Approval Request by Token (Fix: Return User & Profile)
 app.get("/approve-request/:token", async (req, res) => {
-
+  console.log("Token route hit:", req.params.token);
   try {
     const { token } = req.params;
-    console.log("Approval token received:", token);
 
-    const approval = await ApprovalRequest.findOne({ token });
+    const approval = await ApprovalRequest.findOne({ token }); // ✅ Populate User Data
     if (!approval) {
       return res.status(404).json({ message: "Invalid approval token" });
     }
 
-    const user = await User.findById(approval.userId);
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-   
-
-    res.json({ message: "Approval successful", userId: approval.userId });
+    res.json({
+      message: "Approval request fetched successfully",
+      requestDetails: {
+        userId: approval.userId?._id?.toString(),
+        status: approval.status,  // ✅ Send correct status
+        requestorEmail : approval.requestorEmail,
+      },
+    });
   } catch (error) {
-    console.error("Error approving request:", error);
+    console.error("Error fetching approval request:", error);
     res.status(500).json({ message: "Server error" });
   }
+  console.log("Received token:", token);
+  console.log("Approval Request Found:", approval);
+
 });
+
+
+// ✅ Approve User (Fix: Use Mongoose)
+
+
 app.post("/approve-user/:userId", async (req, res) => {
   try {
     const { userId } = req.params;
+    const objectIdUserId = new mongoose.Types.ObjectId(userId); // ✅ Convert to ObjectId
 
-    const user = await User.findById(userId);
-    if (!user) return res.status(404).json({ message: "User not found" });
+    // ✅ Update user status in `User` collection
+    const user = await User.findByIdAndUpdate(objectIdUserId, { status: "approved" }, { new: true });
 
-    user.isVerified = true;
-    await user.save();
+    if (!user) {
+      return res.status(400).json({ success: false, message: "User not found or already approved" });
+    }
 
-    await ApprovalRequest.findOneAndUpdate(
-      { userId },
-      { status: "approved" }
+    // ✅ Update approval request status in `ApprovalRequest`
+    const approvalRequest = await ApprovalRequest.findOneAndUpdate(
+      { userId: objectIdUserId },  // ✅ Ensure we're querying with ObjectId
+      { status: "approved" },  // ✅ Update status
+      { new: true }
     );
 
-    res.json({ message: "User approved successfully" });
+    if (!approvalRequest) {
+      return res.status(400).json({ success: false, message: "Approval request not found" });
+    }
+
+    console.log("✅ ApprovalRequest updated successfully:", approvalRequest); // Debugging log
+
+    res.json({ success: true, message: "User approved successfully" });
   } catch (error) {
-    console.error("Error approving user:", error);
-    res.status(500).json({ message: "Server error" });
+    console.error("Approval Error:", error);
+    res.status(500).json({ success: false, message: "Internal server error" });
   }
 });
 
 
-
+// ✅ Fetch Approval Requests
 app.get("/approval-requests", async (req, res) => {
   try {
     const requests = await ApprovalRequest.find({}, "userId status updatedAt").sort({ updatedAt: -1 });
-
-    console.log("Fetched Approval Requests:", requests); // ✅ Debugging log
     res.json(requests);
   } catch (error) {
     console.error("Error fetching approval requests:", error);
@@ -343,6 +361,30 @@ app.get("/approval-requests", async (req, res) => {
   }
 });
 
+app.post("/verify-otp", async (req, res) => {
+  const { email, otp } = req.body;
+  if (!email || !otp) {
+    return res.status(400).json({ message: "Email and OTP are required." });
+  }
+
+  const user = await User.findOne({ email });
+  if (!user) return res.status(400).json({ message: "User not found." });
+
+  if (!user.otp || !user.otpExpires || Date.now() > user.otpExpires) {
+    return res.status(400).json({ message: "OTP expired. Request a new one." });
+  }
+
+  const isOtpValid = await bcrypt.compare(otp, user.otp);
+  if (!isOtpValid) return res.status(400).json({ message: "Invalid OTP. Try again." });
+
+  // ✅ Mark user as verified and clear OTP
+  user.isVerified = true;
+  user.otp = null;
+  user.otpExpires = null;
+  await user.save();
+
+  res.json({ success: true, message: "OTP verified successfully!" });
+});
 
 app.post("/send-otp", async (req, res) => {
   try {
@@ -564,6 +606,31 @@ app.get("/reset-password/:token", async (req, res) => {
 });
 
 
+
+const SERPAPI_KEY = process.env.SERPAPI_KEY;
+
+app.get("/scholar-publications", async (req, res) => {
+  const { scholarId } = req.query;
+
+  if (!scholarId) {
+    return res.status(400).json({ message: "Scholar ID is required" });
+  }
+
+  try {
+    console.log("Fetching publications for Scholar ID:", scholarId);
+
+    const url = `https://serpapi.com/search.json?engine=google_scholar_author&author_id=${scholarId}&api_key=${SERPAPI_KEY}`;
+    const response = await axios.get(url);
+
+    console.log("API Response:", response.data);
+
+    const publications = response.data.articles || response.data.results || [];
+    res.json(publications);
+  } catch (error) {
+    console.error("Error fetching publications:", error.response?.data || error.message);
+    res.status(500).json({ message: "Error fetching publications", error: error.message });
+  }
+});
 
 
 

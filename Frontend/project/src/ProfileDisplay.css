@@ -1,95 +1,164 @@
-/* Profile Display Styles */
-.profile-container {
-   width: 100vw;
-    margin: 0 auto;
-    padding: 20px;
-    background: #f9f9f9;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+/* Wrapper for User Profile */
+/* User Avatar */
+
+
+.user-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
 }
 
-.profile-header {
+
+/* User Avatar Container */
+.user-avatar-container {
+margin-left: 100px;
+    text-align: center;
+    margin-bottom: 0px;
+   
+    width: 1500px;
+    background: linear-gradient(45deg,  #02549c, #8c8cb4);
+    padding: 30px;
+
+}
+
+/* User Avatar */
+.user-avatar {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
     display: flex;
-    flex-direction: column;
     align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    margin: 0 auto;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+
+
+/* Edit Button */
+.user-edit-btn {
+    background: #b6b9bb;
+    color: black;
+    border: none;
+    padding: 12px 18px;
+    font-size: 15px;
+    font-weight: bold;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.3s;
+    display: block;
+    margin-top: 30px;
+    margin: 10px auto;
+}
+
+.user-edit-btn:hover {
+    background: #013c74;
+    color: white;
+}
+
+/* User Profile Content */
+.user-profile-content {
+    margin-left: 100px;
+    margin-top: 10px;
+}
+
+/* User Card */
+.user-card {
+    background: white;
+    padding: 10px;
+    margin-bottom: 1px;
+    border-radius: 8px;
+    box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
+    transition: 0.3s;
+}
+
+/* Section Headers */
+.section-headeer {
+    display: flex;
+    justify-content: space-between;
+    
+    align-items: center;
+    font-weight: bold;
+    padding: 12px;
+    border-radius: 6px;
+    color:black;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.section-header:hover {
+    background: #b6b9bb;
+}
+
+/* Section Content */
+.section-content {
+    padding: 12px;
+    background-color: #a3b7d6;
+    border-radius: 5px;
+    box-shadow: inset 0px 0px 5px rgba(0, 0, 0, 0.1);
+    font-size: 15px;
+}
+
+/* Publications Section */
+.pub {
+    background-color: #a3b7d6;
+    padding: 15px;
+    margin-top: 15px;
+    border-radius: 8px;
+    box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.pub h3 {
+    color: rgb(70, 69, 69);
+    padding: 10px;
+    border-radius: 6px;
     text-align: center;
 }
 
-.profile-top {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 20px;
+.pub ul {
+    list-style-type: none;
+    padding: 0;
 }
 
-.profile-image img {
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 3px solid #ddd;
+.pub li {
+    background: #f3f3f3;
+    padding: 10px;
+    margin: 8px 0;
+    border-radius: 6px;
+    box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.1);
 }
 
-.profile-image p {
-    font-size: 14px;
-    color: #777;
+.pub li a {
+    color: #02549c;
+    text-decoration: none;
+    font-weight: bold;
+    margin-left: 8px;
 }
 
-.edit-profile-btn {
-    margin-top: 10px;
-    padding: 8px 15px;
-    font-size: 14px;
-    background: #007bff;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background 0.3s ease;
+.pub li a:hover {
+    color: #013c74;
+    text-decoration: underline;
 }
 
-.edit-profile-btn:hover {
-    background: #0056b3;
-}
-
-.profile-card {
-    background: white;
-    padding: 15px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    width: 100%;
-    margin-bottom: 15px;
-}
-
-.profile-card h3 {
-    border-bottom: 2px solid #007bff;
-    padding-bottom: 5px;
-    margin-bottom: 10px;
-    font-size: 18px;
-    color: #333;
-}
-
-.profile-card p {
-    margin: 5px 0;
-    font-size: 14px;
-    color: #555;
-}
-
-.profile-body {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-}
-
-.profile-body .profile-card {
-    width: 48%;
-}
-
+/* Responsive Design */
 @media (max-width: 768px) {
-    .profile-body {
-        flex-direction: column;
+    .user-profile-wrapper {
+        width: 95%;
     }
 
-    .profile-body .profile-card {
-        width: 100%;
+    .section-header {
+        font-size: 14px;
+        padding: 10px;
+    }
+
+    .pub h3 {
+        font-size: 16px;
+    }
+
+    .user-edit-btn {
+        font-size: 14px;
+        padding: 10px 15px;
     }
 }

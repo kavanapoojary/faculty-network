@@ -14,7 +14,9 @@ import MyBlogs from "./MyBlogs";
 import CreateDocument from "./CreateDocumentation";
 import ViewDocuments from "./ViewDocumentation";
 import MyDocuments from "./MyDocumentation";
-import SendAprroval from "./ApproveUsers.js";
+
+import SendAprroval from "./ApproveUsers.jsx";
+
 import ForgotPassword from "./ForgotPassword"; 
 import ResetPassword from "./ResetPassword"; 
 
@@ -80,6 +82,7 @@ const App = () => {
                 <Route path="/" element={<ViewBlogs />} /> {/* ✅ Home displays blogs */}
                 <Route path="/home" element={<Navigate to="/" />} /> 
                 <Route path="/search" element={<FacultyList />} /> {/* ✅ Search displays faculty list */}
+                <Route path="/response/:token" element={<SendAprroval/>}/>
                 
                 <Route
                   path="/profile"
@@ -100,14 +103,12 @@ const App = () => {
                   }
                 />
                 <Route path="/create-blog" element={<BlogCreation />} />
-                <Route path="/viewblogs" element={<ViewBlogs />} />
                 <Route path="/my-blogs" element={<MyBlogs />} />
+                <Route path="/profile/:userId" element={<Profile />} />
                 <Route path="/blog/:id" element={<BlogDetails />} />
                 <Route path="/create-documentation" element={<CreateDocument />} />
                 <Route path="/documentation" element={<ViewDocuments />} />
                 <Route path="/my-documentation" element={<MyDocuments />} />
-                <Route path="/response/:token" element={<SendAprroval/>}/>
-                
               </Routes>
             </div>
           </>

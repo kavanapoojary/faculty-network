@@ -42,6 +42,7 @@ const FacultyList = () => {
   };
   return (
     <div className="searchh-faculty-container">
+      <div className="ser">
       {/* Search Input */}
       <input
         type="text"
@@ -50,6 +51,7 @@ const FacultyList = () => {
         onChange={(e) => setSearchTerm(e.target.value)} // Update state on change
         className="search-input"
       />
+      </div>
 
       {/* Faculty Grid */}
       <div className="faculty-grid-container">

@@ -1,0 +1,87 @@
+/* Main container for blog details */
+.blog-details-container {
+    width: 80%;
+    margin: 40px auto;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
+
+/* Blog Title */
+.blog-title {
+    font-size: 2rem;
+    color: #333;
+    text-align: center;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+/* Meta information */
+.blog-meta {
+    text-align: center;
+    color: gray;
+    font-size: 0.9rem;
+    margin-bottom: 15px;
+}
+
+/* Blog Content */
+.blog-content {
+    font-size: 1rem;
+    color: #555;
+    line-height: 1.6;
+    text-align: justify;
+    margin-top: 20px;
+}
+
+/* Blog Details Section */
+.blog-details-section {
+    margin-top: 20px;
+    padding: 15px;
+    border-top: 1px solid #ddd;
+    background: #f9f9f9;
+    border-radius: 8px;
+}
+
+/* Additional Content */
+.additional-content {
+    margin-top: 20px;
+    padding: 15px;
+    border-top: 1px solid #ddd;
+    background: #f9f9f9;
+    border-radius: 8px;
+}
+
+/* Section Titles */
+h3 {
+    color: #444;
+    margin-bottom: 10px;
+    font-size: 1.3rem;
+}
+
+/* Images inside the blog */
+.additional-content img,
+.blog-content img {
+    display: block;
+    margin: 20px auto; /* Centers the image */
+    max-width: 100%; /* Ensures responsiveness */
+    height: auto; /* Maintains aspect ratio */
+    border-radius: 10px; /* Adds rounded corners */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Adds a slight shadow */
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .blog-details-container {
+        width: 95%;
+        padding: 15px;
+    }
+
+    .blog-title {
+        font-size: 1.8rem;
+    }
+
+    .blog-content {
+        font-size: 0.95rem;
+    }
+}

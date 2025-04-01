@@ -1,190 +1,229 @@
-
-/* Signup.css - Elegant Glassmorphism Design */
+/* ======== Main Auth Container ======== */
 .auth-container {
-  width: 70vw;
-  height: 100vh;
-  margin: 80px auto;
-  padding: 40px;
-  background: linear-gradient(to right, #002244, #004488); 
-  backdrop-filter: blur(10px);
-  text-align: center;
+  background:linear-gradient(to right, #002244, #004488);
+  width: 950px;
+  max-width: 85%;
+  height: 700px;
+  margin: 50px auto;
+  padding: 50px;
+
+
+  color: white;
+  font-family: 'Segoe UI', sans-serif;
+  backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
+/* ======== Headings ======== */
 .auth-container h2 {
-  color: #fff;
-  font-size: 26px;
+  text-align: center;
+  margin-bottom: 30px;
+  font-size: 28px;
   font-weight: bold;
-  margin-bottom: 25px;
   text-transform: uppercase;
-  letter-spacing: 1.5px;
-}
-  
-select {
-  width: 95%;
-  padding: 15px;
-  margin: 12px 0;
-  border: none;
-  border-radius: 10px;
-  background: rgba(37, 77, 112, 0.6);
-  color: #fff;
-  font-size: 16px;
-  transition: all 0.4s ease-in-out;
-  outline: none;
-}
-select:focus {
-  background: rgba(54, 25, 91, 0.8);
-  border: 1px solid #ffccff;
+  color: white;
+  letter-spacing: 1px;
 }
 
-.auth-container input {
-  width: 100%;
-  padding: 15px;
-  margin: 12px 0;
-  border: none;
-  border-radius: 10px;
-  background: rgba(37, 77, 112, 0.6);
-  color: #fff;
-  font-size: 16px;
-  transition: all 0.4s ease-in-out;
-  outline: none;
-}
-
-.auth-container input::placeholder {
-  color: rgba(255, 255, 255, 0.6);
-}
-
-.auth-container input:focus {
-  background: rgba(54, 25, 91, 0.8);
-  border: 1px solid #ffccff;
-}
-
-.auth-container button {
-  width: 100%;
+/* ======== Input & Select Fields ======== */
+.auth-container input,
+.auth-container select {
+  width: 90%;
   padding: 14px;
+  margin: 15px auto;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 10px;
+  outline: none;
+  font-size: 16px;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  transition: 0.3s ease-in-out;
+  display: block;
+}
+
+.auth-container input::placeholder,
+.auth-container select {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.auth-container input:focus,
+.auth-container select:focus {
+  border-color: white;
+  background: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+}
+
+/* ======== File Input Special Styling ======== */
+.auth-container input[type="file"] {
+  background: white;
+  color: black;
+  cursor: pointer;
+  padding: 12px;
+}
+
+/* ======== Buttons ======== */
+.auth-container button {
+  width: 90%;
+  padding: 16px;
+  background: white;
+  color: #004488;
   border: none;
   border-radius: 10px;
-  background: linear-gradient(135deg, #36195B, #522377);
-  color: #fff;
-  font-size: 18px;
   font-weight: bold;
   cursor: pointer;
-  transition: all 0.4s ease-in-out;
+  font-size: 16px;
+  transition: all 0.3s ease-in-out;
+  display: block;
+  margin: 20px auto;
 }
 
 .auth-container button:hover {
-  background: linear-gradient(135deg, #522377, #36195B);
+  background: #004488;
+  color: white;
+
 }
 
-.auth-container p {
-  color: #ddd;
-  margin-top: 15px;
-  font-size: 14px;
-}
-
-.auth-container .toggle-link {
-  color: #ffccff;
-  cursor: pointer;
-  transition: all 0.3s ease-in-out;
-}
-
-.auth-container .toggle-link:hover {
-  text-decoration: underline;
-  color: #ffffff;
-}
-/* Profile Upload Section */
-.profile-upload {
-  text-align: center;
-  margin-top: 15px;
-}
-
-/* Label Styling */
-.profile-upload label {
-  display: block;
-  font-size: 14px;
-  color: #ccc;
-  margin-bottom: 8px;
-}
-
-/* File Input */
-.profile-upload input[type="file"] {
-  width: 100%;
+/* ======== Messages ======== */
+.message {
   padding: 12px;
-  border: none;
-  border-radius: 8px;
-  background: rgba(54, 25, 91, 0.6);
-  color: #fff;
-  cursor: pointer;
-  transition: background 0.3s ease-in-out;
-}
-
-.profile-upload input[type="file"]:hover {
-  background: rgba(54, 25, 91, 0.8);
-}
-
-/* Profile Image Preview */
-.profile-preview {
-  width: 100px;
-  height: 100px;
-  margin: 10px auto;
-  border-radius: 50%;
-  border: 2px solid #ffccff;
-  background-size: cover;
-  background-position: center;
-}
-.suggestions-section {
+  border-radius: 10px;
+  margin-bottom: 20px;
   text-align: center;
-  margin-top: 10px;
+  font-weight: 500;
+  width: 90%;
+  margin-left: auto;
+  margin-right: auto;
 }
 
-.section-title {
-  font-size: 18px;
+.message.success {
+  background-color: #28a745;
+  color: white;
+}
+
+.message.error {
+  background-color: #dc3545;
+  color: white;
+}
+
+/* ===================== */
+/*     SUGGESTION BOX    */
+/* ===================== */
+.suggestions-container {
+  display: flex;
+  flex-wrap: nowrap; /* Ensures all items stay in one row */
+  justify-content: flex-start;
+  gap: 15px;
+  margin-top: 20px;
+  overflow-x: auto; /* Allows horizontal scrolling if needed */
+  padding: 10px;
+  scrollbar-width: thin; /* For Firefox */
+  scrollbar-color: #004488;
+}
+
+/* Scrollbar Styles */
+.suggestions-container::-webkit-scrollbar {
+  height: 8px;
+}
+
+.suggestions-container::-webkit-scrollbar-thumb {
+  background: #004488;
+  border-radius: 4px;
+}
+
+.suggestions-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Suggestion Cards */
+.suggestion-card {
+  background: #3490bb;
+  padding: 15px;
+ 
+  width: 200px;
+  text-align: center;
+  box-shadow: 0 4px 8px rgba(255, 255, 255, 0.2);
+  flex-shrink: 0; /* Prevents cards from shrinking */
+}
+
+/* User Info */
+.user-info {
+  margin-bottom: 10px;
+}
+
+.user-name {
   font-weight: bold;
-  margin-bottom: 8px;
-  color: #ffd700;
-}
-.suggestions-list {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 10px;
-  padding: 0;
-}
-
-.suggestion-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  width: 250px; /* Fixed width ensures alignment */
-  padding: 8px;
-  font-size: 16px;
-  text-align: start;
-}
-
-.radio-btn {
-  transform: scale(1.2);
-  cursor: pointer;
+  font-size: 18px;
 }
 
 .user-email {
-  font-weight: 500;
-  color: #fff;
-  white-space: nowrap;
+  font-size: 14px;
+  color: #bbb;
 }
 
-
-
-.approval-btn {
-  background: #6a0dad;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  margin-top: 15px;
+/* Select Button */
+.select-btn {
+  background: #3490bb;
+  padding: 8px;
+  width: 100%;
+ 
   cursor: pointer;
-  border-radius: 5px;
-  transition: 0.3s;
+  font-size: 14px;
 }
 
-.approval-btn:hover {
-  background: #4b0082;
+.select-btn.selected {
+  background: #004488;
+}
+
+/* Approval Button */
+.approval-btn {
+  background: #004488;
+  font-size: 18px;
+  padding: 12px;
+  margin-top: 20px;
+}
+
+.approval-btn:disabled {
+  background: gray;
+}
+
+/* Signup Button */
+form button {
+  background: #008000;
+  font-size: 18px;
+  padding: 12px;
+  margin-top: 20px;
+}
+/* ===================== */
+/* RESPONSIVE DESIGN */
+/* ===================== */
+@media (max-width: 1024px) {
+  .suggestions-container {
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .suggestions-container {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  }
+
+  .auth-container {
+    width: 90%;
+    padding: 40px;
+  }
+}
+
+@media (max-width: 480px) {
+  .suggestions-container {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  }
+
+  .auth-container {
+    width: 95%;
+    padding: 30px;
+  }
+
+  .auth-container h2 {
+    font-size: 24px;
+  }
 }

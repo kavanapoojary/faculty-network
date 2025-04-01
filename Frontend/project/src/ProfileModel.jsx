@@ -1,9 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import "./ProfileModel.css";
-import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io"; // Lighter arrows
+import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 
 const ProfileModel = ({ faculty, onClose }) => {
   const [expandedSections, setExpandedSections] = useState({});
+  const [publications, setPublications] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   if (!faculty) return null;
 
@@ -13,34 +16,63 @@ const ProfileModel = ({ faculty, onClose }) => {
       [section]: !prev[section],
     }));
   };
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedAuthor, setSelectedAuthor] = useState(null);
+  
+  const handleProfileClick = async (authorId) => {
+    try {
+      const response = await axios.get(`http://localhost:5000/api/users/${authorId}`);
+      setSelectedAuthor(response.data);
+      setIsModalOpen(true);
+    } catch (error) {
+      console.error("Error fetching author details:", error);
+    }
+  };
+  
+  
+  // Fetch publications from backend
+  useEffect(() => {
+    const fetchPublications = async () => {
+      const scholarId = faculty?.additional?.googleScholar?.split("user=")[1];
+      if (!scholarId) return;
+
+      setLoading(true);
+      try {
+        const response = await axios.get(`http://localhost:5000/scholar-publications`, {
+          params: { scholarId },
+        });
+        setPublications(response.data);
+      } catch (error) {
+        console.error("Error fetching publications:", error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPublications();
+  }, [faculty]);
 
   return (
     <>
       <div className="profile-modal-overlay" onClick={onClose}></div>
       <div className="profile-modal">
-      <div className="profile-image-container">
         <button onClick={onClose} className="close-button">X</button>
-</div>
+
+        {/* Profile Header */}
         <div className="profile-header">
-  <div className="profile-immg">
-    <img
-      src={faculty?.personal?.profilePicture || "default-profile.png"}
-      alt="Profile"
-    />
-  </div>
-
-  <div className="profile-details">
-    <h2 className="profile-name">{faculty?.personal?.fullName ?? "N/A"}</h2>
-    <p><strong>Email:</strong> {faculty?.personal?.personalEmail ?? "N/A"}</p>
-    <p><strong>College Email:</strong> {faculty?.personal?.collegeEmail ?? "N/A"}</p>
-    <p><strong>Phone:</strong> {faculty?.personal?.phone ?? "N/A"}</p>
-    <p><strong>Date of Birth:</strong> {faculty?.personal?.dob ?? "N/A"}</p>
-    <p><strong>Gender:</strong> {faculty?.personal?.gender ?? "N/A"}</p>
-    <p><strong>Address:</strong> {faculty?.personal?.address ?? "N/A"}</p>
-  </div>
-</div>
-
-
+          <div className="profile-img">
+            <img src={faculty?.personal?.profilePicture || "default-profile.png"} alt="Profile" />
+          </div>
+          <div className="profile-details">
+            <h2 className="profile-name">{faculty?.personal?.fullName ?? "N/A"}</h2>
+            <p><strong>Email:</strong> {faculty?.personal?.personalEmail ?? "N/A"}</p>
+            <p><strong>College Email:</strong> {faculty?.personal?.collegeEmail ?? "N/A"}</p>
+            <p><strong>Phone:</strong> {faculty?.personal?.phone ?? "N/A"}</p>
+            <p><strong>Date of Birth:</strong> {faculty?.personal?.dob ?? "N/A"}</p>
+            <p><strong>Gender:</strong> {faculty?.personal?.gender ?? "N/A"}</p>
+            <p><strong>Address:</strong> {faculty?.personal?.address ?? "N/A"}</p>
+          </div>
+        </div>
 
         {/* Expandable Sections */}
         {[
@@ -51,6 +83,10 @@ const ProfileModel = ({ faculty, onClose }) => {
               <>
                 <p><strong>Qualification:</strong> {faculty?.academic?.qualification ?? "N/A"}</p>
                 <p><strong>Specialization:</strong> {faculty?.academic?.specialization ?? "N/A"}</p>
+               
+              <p><strong>Designation:</strong> {faculty?.academic?.designation || "N/A"}</p>
+              <p><strong>Department:</strong> {faculty?.academic?.department || "N/A"}</p>
+                
               </>
             ),
           },
@@ -66,27 +102,40 @@ const ProfileModel = ({ faculty, onClose }) => {
             ),
           },
           {
-            title: "Research & Publications",
-            key: "research",
-            content: (
-              <>
-                <p><strong>Papers:</strong> {faculty?.researchPublications?.papers ?? "N/A"}</p>
-                <p><strong>Conferences:</strong> {faculty?.researchPublications?.conferences ?? "N/A"}</p>
-                <p><strong>Books:</strong> {faculty?.researchPublications?.books ?? "N/A"}</p>
-                <p><strong>Patents:</strong> {faculty?.researchPublications?.patents ?? "N/A"}</p>
-                <p><strong>Grants:</strong> {faculty?.researchPublications?.grants ?? "N/A"}</p>
-              </>
-            ),
-          },
-          {
             title: "Additional Information",
             key: "additional",
             content: (
               <>
-                <p><strong>Google Scholar:</strong> <a href={faculty?.additional?.googleScholar} target="_blank" rel="noopener noreferrer">{faculty?.additional?.googleScholar ?? "N/A"}</a></p>
-                <p><strong>LinkedIn:</strong> <a href={faculty?.additional?.linkedIn} target="_blank" rel="noopener noreferrer">{faculty?.additional?.linkedIn ?? "N/A"}</a></p>
+                <p><strong>Google Scholar:</strong> <a href={faculty?.additional?.googleScholar} target="_blank" rel="noopener noreferrer">View Profile</a></p>
+                <p><strong>LinkedIn:</strong> <a href={faculty?.additional?.linkedIn} target="_blank" rel="noopener noreferrer">LinkedIn</a></p>
                 <p><strong>Skills:</strong> {faculty?.additional?.skills ?? "N/A"}</p>
                 <p><strong>Achievements:</strong> {faculty?.additional?.achievements ?? "N/A"}</p>
+              </>
+            ),
+          },
+          {
+            title: "Publications",
+            key: "publications",
+            content: (
+              <>
+                {loading ? (
+                  <p>Loading publications...</p>
+                ) : publications.length > 0 ? (
+                  <ul>
+                    {publications.map((publication, index) => (
+                      <li key={index}>
+                        <strong>{publication.title}</strong>{" "}
+                        {publication.link && (
+                          <a href={publication.link} target="_blank" rel="noopener noreferrer" style={{ color: "blue", textDecoration: "underline", marginLeft: "10px" }}>
+                            View
+                          </a>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p>No publications available.</p>
+                )}
               </>
             ),
           },

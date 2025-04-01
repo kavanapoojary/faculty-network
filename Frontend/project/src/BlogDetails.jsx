@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
+import "./BlogDetails.css";
 
 function BlogDetails() {
   const { id } = useParams();
@@ -39,20 +40,21 @@ function BlogDetails() {
   return (
     <div className="blog-details-container">
       {blog ? (
-        <div className="additional-content">
-          <h3>Additional Content</h3>
-          {blog.additionalContent && blog.additionalContent.trim() !== "" ? (
-            <div dangerouslySetInnerHTML={{ __html: blog.additionalContent }}></div>
-          ) : (
-            <p style={{ color: "gray" }}>No extra content available.</p>
+        <>
+          <h2 className="blog-title">{blog.title}</h2>
+
+          {blog.additionalContent && blog.additionalContent.trim() !== "" && (
+            <div className="additional-content">
+              {/* Blog content including images */}
+              <div dangerouslySetInnerHTML={{ __html: blog.additionalContent }}></div>
+            </div>
           )}
-        </div>
+        </>
       ) : (
         <p style={{ color: "red" }}>Blog not found.</p>
       )}
     </div>
   );
-  
 }
 
 export default BlogDetails;

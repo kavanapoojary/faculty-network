@@ -12,6 +12,7 @@
 /* Search Input */
 .searchh-input {
   
+width: 50%;
 
   padding: 12px;
   font-size: 1em;
@@ -20,14 +21,17 @@
   outline: none;
   transition: box-shadow 0.3s ease-in-out;
 }
+.ser{
+  width: 93%;
+  margin-left: 150px;
 
+}
 
 /* Faculty List Styles */
 .faculty-list-wrapper {
   padding: 20px;
   display: flex;
   height: 100vh;
-  width: 98%;
   text-align: center;
   justify-content: center;
 }

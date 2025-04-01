@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { MdOutlineSearch, MdOutlineMenu, MdClose, MdOutlineHome, MdOutlineLibraryBooks, MdNoteAlt, MdOutlineSettings, MdOutlinePerson, MdLogout } from "react-icons/md";
 import "./RightSidebar.css"; 
-import logo4 from "./assets/logo4.webp"; 
+// import logo4 from "./assets/logo4.webp"; 
 
 const RightSidebar = ({ setIsLoggedIn }) => { 
   const navigate = useNavigate();

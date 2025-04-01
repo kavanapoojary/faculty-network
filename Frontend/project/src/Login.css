@@ -17,13 +17,14 @@ body {
 
 /* 📌 Extra Large Login Container */
 .loginn-container {
-  background: linear-gradient(to right, #002244, #004488);
+  background: linear-gradient(45deg,  #02549c, #8c8cb4);
 align-items: center;
 justify-content: center;
   padding: 80px; /* Increased padding significantly */
   width: 750px; /* Made it even wider */
   height: 700px;
   margin-top: 90px;
+  margin-left: 500px;
 text-align: center;
 }
 
@@ -101,7 +102,7 @@ text-align: center;
   width: 100%;
   padding: 22px; /* Increased button height */
   background: white;
-  color: #003366;
+  color: #02549c;
   border: none;
   font-size: 22px; /* Bigger text */
   font-weight: bold;
